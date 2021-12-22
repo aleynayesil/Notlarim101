@@ -172,7 +172,35 @@ namespace Notlarim101.WebApp.Controllers
         {
             return View();
         }       
+        public ActionResult UserActivate(Guid id)
+        {
+            NotlarimUserManager num = new NotlarimUserManager();
+            BusinessLayerResult<NotlarimUser> res = num.ActivateUser(id);
+            if (res.Errors.Count>0)
+            {
+                TempData["errors"] = res.Errors;
+                return RedirectToAction("UserActivateCancel");
+            }
+            return RedirectToAction("UserActivateOk");
+        }
+        public ActionResult UserActivateOk()
+        {
+            return View();
+        }
+        public ActionResult UserActivateCancel()
+        {
+            List<ErrorMessageObj> errors = null;
+            if (TempData["errors"]!=null)
+            {
+                errors = TempData["errors"] as List<ErrorMessageObj>;
+            }
 
-
+            return View(errors);
+        }
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            return RedirectToAction("Index");
+        }
     }
 }
