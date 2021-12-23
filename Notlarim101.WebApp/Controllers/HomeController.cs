@@ -8,7 +8,7 @@ using Notlarim101.BusinessLayer;
 using Notlarim101.Entity;
 using Notlarim101.Entity.Messages;
 using Notlarim101.Entity.ValueObject;
-
+using Notlarim101.WebApp.ViewModel;
 
 namespace Notlarim101.WebApp.Controllers
 {
@@ -24,14 +24,14 @@ namespace Notlarim101.WebApp.Controllers
             //test.CommentTest();
 
             NoteManager nm = new NoteManager();
-            
-            return View(nm.GetAllNotes().OrderByDescending(s=>s.ModifiedOn).ToList());
+
+            return View(nm.GetAllNotes().OrderByDescending(s => s.ModifiedOn).ToList());
         }
 
-        
+
         public ActionResult ByCategoryId(int? id)
         {
-            if (id==null)
+            if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -46,7 +46,7 @@ namespace Notlarim101.WebApp.Controllers
 
             return View("Index", cat.Notes.OrderByDescending(s => s.ModifiedOn).ToList());
         }
-        
+
         public ActionResult ByCategoryTitle(string id)
         {
             if (id == null)
@@ -76,17 +76,17 @@ namespace Notlarim101.WebApp.Controllers
             {
                 NotlarimUserManager num = new NotlarimUserManager();
                 BusinessLayerResult<NotlarimUser> res = num.LoginUser(model);
-                if (res.Errors.Count>0)
+                if (res.Errors.Count > 0)
                 {
-                    if (res.Errors.Find(x=>x.Code==ErrorMessageCode.UserIsNotActive)!=null)
+                    if (res.Errors.Find(x => x.Code == ErrorMessageCode.UserIsNotActive) != null)
                     {
                         ViewBag.SetLink = "http://Home/UserActivate/1234-2345-2345467";
                     }
 
-                    res.Errors.ForEach(s=>ModelState.AddModelError("",s.Message));
+                    res.Errors.ForEach(s => ModelState.AddModelError("", s.Message));
                     return View(model);
                 }
-                
+
                 Session["login"] = res.Result;//session a kullanici bilgilerini aktarma
                 return RedirectToAction("Index");//yonlendirme
             }
@@ -106,9 +106,9 @@ namespace Notlarim101.WebApp.Controllers
                 NotlarimUserManager num = new NotlarimUserManager();
                 BusinessLayerResult<NotlarimUser> res = num.RegisterUser(model);
 
-                if (res.Errors.Count>0)
+                if (res.Errors.Count > 0)
                 {
-                    res.Errors.ForEach(s=>ModelState.AddModelError("",s.Message));
+                    res.Errors.ForEach(s => ModelState.AddModelError("", s.Message));
                     return View(model);
                 }
 
@@ -163,7 +163,15 @@ namespace Notlarim101.WebApp.Controllers
                 //{
                 //    return RedirectToAction("RegisterOk");
                 //}
-                return RedirectToAction("RegisterOk");
+
+                OkViewModel notifyObj = new OkViewModel()
+                {
+                    Title = "Kayit başarılı",
+                    RedirectingUrl = "/Home/Login",
+                };
+                notifyObj.Items.Add("Lütfen e-posta adresinize gönderdiğimiz aktivasyon linkine tıklayarak hesabınız aktive a-ediniz. Hesabınızı aktive etmeden not ekleyemez beğeni yapamazsınız.");
+
+                return View("Ok",notifyObj);
             }
             return View(model);
         }
@@ -171,12 +179,12 @@ namespace Notlarim101.WebApp.Controllers
         public ActionResult RegisterOk()
         {
             return View();
-        }       
+        }
         public ActionResult UserActivate(Guid id)
         {
             NotlarimUserManager num = new NotlarimUserManager();
             BusinessLayerResult<NotlarimUser> res = num.ActivateUser(id);
-            if (res.Errors.Count>0)
+            if (res.Errors.Count > 0)
             {
                 TempData["errors"] = res.Errors;
                 return RedirectToAction("UserActivateCancel");
@@ -190,13 +198,67 @@ namespace Notlarim101.WebApp.Controllers
         public ActionResult UserActivateCancel()
         {
             List<ErrorMessageObj> errors = null;
-            if (TempData["errors"]!=null)
+            if (TempData["errors"] != null)
             {
                 errors = TempData["errors"] as List<ErrorMessageObj>;
             }
 
             return View(errors);
         }
+
+        public ActionResult ShowProfile()
+        {
+            NotlarimUser currentUser = Session["login"] as NotlarimUser;
+            NotlarimUserManager num = new NotlarimUserManager();
+            BusinessLayerResult<NotlarimUser> res = num.GetUserById(currentUser.Id);
+            if (res.Errors.Count > 0)
+            {
+                //kullanıcı hata ekranına yönlendirilecek
+            }
+            return View(res.Result);
+        }
+        public ActionResult EditProfile()
+        {
+            //NotlarimUserManager num = new NotlarimUserManager();
+            //BusinessLayerResult<NotlarimUser> res=
+            return View();
+        }
+        [HttpPost]
+        public ActionResult EditProfile(int id)
+        {
+            //NotlarimUserManager num = new NotlarimUserManager();
+            //BusinessLayerResult<NotlarimUser> res=
+            return View();
+        }
+        public ActionResult DeleteProfile()
+        {
+            //NotlarimUserManager num = new NotlarimUserManager();
+            //BusinessLayerResult<NotlarimUser> res=
+            return View();
+        }
+        [HttpPost]
+        public ActionResult DeleteProfile(int id)
+        {
+            //NotlarimUserManager num = new NotlarimUserManager();
+            //BusinessLayerResult<NotlarimUser> res=
+            return View();
+        }
+
+        //public ActionResult TestNotify()
+        //{
+        //    ErrorViewModel model = new ErrorViewModel()
+        //    {
+        //        Header = "Yönlendirme",
+        //        Title = "UYARI",
+        //        RedirectingTimeOut = 10000,
+        //        Items = new List<ErrorMessageObj>()
+        //        {
+        //            new ErrorMessageObj(){Message="Test basarili 1"},
+        //            new ErrorMessageObj(){Message="Test basarili 1"},
+        //        }
+        //    };
+        //    return View("Error", model);
+        //}
         public ActionResult Logout()
         {
             Session.Clear();

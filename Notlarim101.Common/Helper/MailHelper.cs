@@ -38,7 +38,7 @@ namespace Notlarim101.Common.Helper
                     smtp.Credentials = new NetworkCredential(//kullanıcı bilgileri
                         ConfigHelper.Get<string>("MailUser"),
                         ConfigHelper.Get<string>("MailPass"));
-                    smtp.Send(message);
+                    smtp.Send(message);//smpt mail gönderme protokolü
                     result = true;
                 }
             }

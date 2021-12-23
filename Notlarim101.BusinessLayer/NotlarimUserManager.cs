@@ -44,6 +44,7 @@ namespace Notlarim101.BusinessLayer
                     Username = data.Username,
                     Email = data.Email,
                     Password = data.Password,
+                    ProfileImageFilename="login.jpeg",
                     ActivateGuid = Guid.NewGuid(),
                     IsActive = false,
                     IsAdmin = false,
@@ -111,6 +112,16 @@ namespace Notlarim101.BusinessLayer
             }
             return res;
         }
-    
+
+        public BusinessLayerResult<NotlarimUser> GetUserById(int id)
+        {
+            BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
+            res.Result = ruser.Find(s=>s.Id==id);
+            if (res.Result==null)
+            {//???
+                res.AddError(ErrorMessageCode.UserNotFound, "Kullanıcı Bulunamadı");
+            }
+            return res;
+        }
     }
 }
