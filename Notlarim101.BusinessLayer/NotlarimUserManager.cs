@@ -22,14 +22,14 @@ namespace Notlarim101.BusinessLayer
 
             BusinessLayerResult<NotlarimUser> lr = new BusinessLayerResult<NotlarimUser>();
 
-            if (user!=null)
+            if (user != null)
             {
-                if (user.Username==data.Username)
+                if (user.Username == data.Username)
                 {
                     lr.AddError(ErrorMessageCode.UsernameAlreadyExist, "Kullanici adi kayitli");
                 }
 
-                if (user.Email==data.Email)
+                if (user.Email == data.Email)
                 {
                     lr.AddError(ErrorMessageCode.EmailalreadyExist, "Email kayitli");
                 }
@@ -44,7 +44,7 @@ namespace Notlarim101.BusinessLayer
                     Username = data.Username,
                     Email = data.Email,
                     Password = data.Password,
-                    ProfileImageFilename="login.jpeg",
+                    ProfileImageFilename = "login.jpeg",
                     ActivateGuid = Guid.NewGuid(),
                     IsActive = false,
                     IsAdmin = false,
@@ -53,7 +53,7 @@ namespace Notlarim101.BusinessLayer
                     //CreatedOn = DateTime.Now,
                     //ModifiedUsername = "system"
                 });
-                if (dbResult>0)
+                if (dbResult > 0)
                 {
                     lr.Result = ruser.Find(s => s.Email == data.Email && s.Username == data.Username);
                     string siteUri = ConfigHelper.Get<string>("SiteRootUri");
@@ -73,10 +73,10 @@ namespace Notlarim101.BusinessLayer
         {
             //Giris kontrolu
             //Hesap aktif edilmismi kontrolu
-            
+
             BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
             res.Result = ruser.Find(s => s.Username == data.Username && s.Password == data.Password);
-            if (res.Result!=null)
+            if (res.Result != null)
             {
                 if (!res.Result.IsActive)
                 {
@@ -91,12 +91,12 @@ namespace Notlarim101.BusinessLayer
 
             return res;
         }
-    
+
         public BusinessLayerResult<NotlarimUser> ActivateUser(Guid id)
         {
             BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
             res.Result = ruser.Find(x => x.ActivateGuid == id);
-            if (res.Result!=null)
+            if (res.Result != null)
             {
                 if (res.Result.IsActive)
                 {
@@ -116,10 +116,62 @@ namespace Notlarim101.BusinessLayer
         public BusinessLayerResult<NotlarimUser> GetUserById(int id)
         {
             BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
-            res.Result = ruser.Find(s=>s.Id==id);
-            if (res.Result==null)
+            res.Result = ruser.Find(s => s.Id == id);
+            if (res.Result == null)
             {//???
                 res.AddError(ErrorMessageCode.UserNotFound, "Kullanıcı Bulunamadı");
+            }
+            return res;
+        }
+
+        public BusinessLayerResult<NotlarimUser> UpdateProfile(NotlarimUser data)
+        {
+            NotlarimUser user = ruser.Find(s => s.Id != data.Id && (s.Username == data.Username || s.Email == data.Email));
+            BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
+            if (user != null && user.Id != data.Id)
+            {
+                if (user.Username == data.Username)
+                {
+                    res.AddError(ErrorMessageCode.UsernameAlreadyExist, "Bu kullanıcı adı daha önce kaydedilmiş.");
+                }
+                if (user.Email == data.Email)
+                {
+                    res.AddError(ErrorMessageCode.EmailalreadyExist, "Bu  E-posta adresi daha önce kaydedilmiş.");
+                }
+                return res;
+            }
+            res.Result = ruser.Find(s => s.Id == data.Id);
+            res.Result.Email = data.Email;
+            res.Result.Name = data.Name;
+            res.Result.Surname = data.Surname;
+            res.Result.Password = data.Password;
+            res.Result.Username = data.Username;
+
+            if (!string.IsNullOrEmpty(data.ProfileImageFilename))
+            {
+                res.Result.ProfileImageFilename = data.ProfileImageFilename;
+            }
+            if (ruser.Update(res.Result) == 0)
+            {
+                res.AddError(ErrorMessageCode.ProfileCouldNotUpdate, "Profil Güncellenemedi.");
+            }
+            return res;
+        }
+
+        public BusinessLayerResult<NotlarimUser> RemoveUserById(int id)
+        {
+            NotlarimUser user = ruser.Find(s => s.Id == id);
+            BusinessLayerResult<NotlarimUser> res = new BusinessLayerResult<NotlarimUser>();
+            if (user != null)
+            {
+                if (ruser.Delete(user) == 0)
+                {
+                    res.AddError(ErrorMessageCode.UserCouldNotRemove, "Kullanıcı Silinemedi");
+                }
+            }
+            else
+            {
+                res.AddError(ErrorMessageCode.UserCouldNotFind, "Kullanıcı Bulunamadı");
             }
             return res;
         }
