@@ -9,12 +9,11 @@ using Notlarim101.DataAccessLayer.EntityFramework;
 
 namespace Notlarim101.BusinessLayer.Abstract
 {
-    public abstract class ManagerBase<T> : IDataAccess<T> where T : class
+    public abstract class ManagerBase<T> : IDataAccess<T> where T : class//abstract classlarla oluşturulan metodlar virtualla oluşturulur daha sonrasında ezebilmek için
     {
-        private Repository<T> repo = new Repository<T>();
+        private Repository<T> repo = new Repository<T>();//repositorynin arasında aracı katman
         public virtual int Delete(T obj)
         {
-
             return repo.Delete(obj);
         }
 
@@ -38,9 +37,9 @@ namespace Notlarim101.BusinessLayer.Abstract
             return repo.List(where);
         }
 
-        public virtual IQueryable<T> QList(Expression<Func<T, bool>> query)
+        public virtual IQueryable<T> QList()
         {
-            return repo.QList(query);
+            return repo.QList();
         }
 
         public virtual int Save()

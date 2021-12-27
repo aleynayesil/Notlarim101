@@ -1,0 +1,83 @@
+﻿@model Notlarim101.Entity.Category
+
+@{
+    ViewBag.Title = "Kategori Sil";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h2>@ViewBag.Title</h2>
+    </div>
+</div>
+<div class="row d-flex">
+    <div class="col-md-6 offset-md-3 ">
+        <h3>Kaydı silmek istediğinize emin misiniz?</h3>
+        <div>
+            <h4>Kategori</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-4">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+
+                <dd class="col-8">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Selamlama)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Selamlama)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.CreatedOn)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.CreatedOn)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ModifiedOn)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ModifiedOn)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ModifiedUsername)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ModifiedUsername)
+                </dd>
+
+            </dl>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <div class="offset-md-2 col-md-10">
+                    <button type="submit" value="Kaydet" class="btn btn-danger ms-2 float-end">Sil</button>
+                </div>
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-outline-secondary float-end" })
+            </div>
+            }
+        </div>
+
+    </div>
+</div>
