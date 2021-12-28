@@ -21,9 +21,6 @@ namespace Notlarim101.BusinessLayer
         public BusinessLayerResult<NotlarimUser> RegisterUser(RegisterViewModel data)
         {
             NotlarimUser user = Find(s => s.Username == data.Username || s.Email == data.Email);
-
-            
-
             if (user != null)
             {
                 if (user.Username == data.Username)
@@ -39,7 +36,7 @@ namespace Notlarim101.BusinessLayer
             }
             else
             {
-                int dbResult = Insert(new NotlarimUser()
+                int dbResult = base.Insert(new NotlarimUser()
                 {
                     Name = data.Name,
                     Surname = data.Surname,
@@ -153,7 +150,7 @@ namespace Notlarim101.BusinessLayer
             {
                 res.Result.ProfileImageFilename = data.ProfileImageFilename;
             }
-            if (Update(res.Result) == 0)
+            if (base.Update(res.Result) == 0)
             {
                 res.AddError(ErrorMessageCode.ProfileCouldNotUpdate, "Profil Güncellenemedi.");
             }
@@ -174,6 +171,71 @@ namespace Notlarim101.BusinessLayer
             else
             {
                 res.AddError(ErrorMessageCode.UserCouldNotFind, "Kullanıcı Bulunamadı");
+            }
+            return res;
+        }
+
+
+        //hiding
+
+        public new BusinessLayerResult<NotlarimUser> Insert(NotlarimUser data)//new int i gizliyor 
+        {
+            NotlarimUser user = Find(s => s.Username == data.Username || s.Email == data.Email);
+            res.Result = data;
+            if (user != null)
+            {
+                if (user.Username == data.Username)
+                {
+                    res.AddError(ErrorMessageCode.UsernameAlreadyExist, "Kullanici adi kayitli");
+                }
+
+                if (user.Email == data.Email)
+                {
+                    res.AddError(ErrorMessageCode.EmailalreadyExist, "Email kayitli");
+                }
+                //throw new Exception("Kayitli kullanici yada e-posta adresi");
+            }
+            else
+            {
+                res.Result.ProfileImageFilename = "user1.jpeg";
+                res.Result.ActivateGuid = Guid.NewGuid();
+                if (base.Insert(res.Result)==0)
+                {
+                    res.AddError(ErrorMessageCode.UserCouldNotInserted, "Kullanıcı Eklenemedi");
+                }
+            }
+
+            return res;
+        }
+
+        public new BusinessLayerResult<NotlarimUser> Update(NotlarimUser data)
+        {
+            NotlarimUser user = Find(s => s.Id != data.Id && (s.Username == data.Username || s.Email == data.Email));
+
+            if (user != null && user.Id != data.Id)
+            {
+                if (user.Username == data.Username)
+                {
+                    res.AddError(ErrorMessageCode.UsernameAlreadyExist, "Bu kullanıcı adı daha önce kaydedilmiş.");
+                }
+                if (user.Email == data.Email)
+                {
+                    res.AddError(ErrorMessageCode.EmailalreadyExist, "Bu  E-posta adresi daha önce kaydedilmiş.");
+                }
+                return res;
+            }
+            res.Result = Find(s => s.Id == data.Id);
+            res.Result.Email = data.Email;
+            res.Result.Name = data.Name;
+            res.Result.Surname = data.Surname;
+            res.Result.Password = data.Password;
+            res.Result.Username = data.Username;
+            res.Result.IsActive = data.IsActive;
+            res.Result.IsAdmin = data.IsAdmin;
+
+            if (base.Update(res.Result) == 0)
+            {
+                res.AddError(ErrorMessageCode.UserCouldNotUpdated, "Kullanıcı Güncellenemedi.");
             }
             return res;
         }

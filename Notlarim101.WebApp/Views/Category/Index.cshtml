@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Notlarim101.Entity.Category>
+﻿@using Notlarim101.WebApp
+@model IEnumerable<Notlarim101.Entity.Category>
 
 @{
     ViewBag.Title = "Index";
@@ -11,7 +12,8 @@
 </div>
 <div class="row">
     <div class="col-md-10">
-        <a href="/Category/Create" class="btn btn-primary float-end me-2" title="Yeni Kayıt"><i class="bi bi-plus-circle"></i> Yeni Kayıt</a>
+        @Bootstrap.LinkButton("/Category/Create/", "primary", string.Empty, "Yeni Kayıt", "bi bi-plus-circle","Yeni Kayıt")
+        @*<a href="/Category/Create" class="btn btn-primary float-end me-2" title="Yeni Kayıt"><i class="bi bi-plus-circle"></i> Yeni Kayıt</a>*@
         <table class="table">
             <tr>
                 <th>
@@ -20,7 +22,7 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                
+
                 <th>
                     @Html.DisplayNameFor(model => model.CreatedOn)
                 </th>
@@ -42,7 +44,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Description)
                     </td>
-                   
+
                     <td>
                         @Html.DisplayFor(modelItem => item.CreatedOn)
                     </td>
@@ -53,9 +55,14 @@
                         @Html.DisplayFor(modelItem => item.ModifiedUsername)
                     </td>
                     <td class="float-end">
-                        <a href="/Category/Edit/@item.Id" class="btn btn-warning btn-sm" title="Güncelle"><i class="bi bi-pencil-fill"></i></a> |
-                        <a href="/Category/Details/@item.Id" class="btn btn-info btn-sm" title="Detay"><i class="bi bi-search"></i></a> |
-                        <a href="/Category/Delete/@item.Id" class="btn btn-danger btn-sm" title="Sil"><i class="bi bi-archive-fill"></i></a>
+                        @Bootstrap.LinkButton("/Category/Edit/" + item.Id, "warning", "btn-sm", "Güncelle", "bi bi-pencil-fill", string.Empty)
+                        |
+                        @Bootstrap.LinkButton("/Category/Details/" + item.Id, "info", "btn-sm", "Detay", "bi bi-search", string.Empty)
+                        |
+                        @Bootstrap.LinkButton("/Category/Delete/" + item.Id, "danger", "btn-sm", "Sil", "bi bi-archive-fill", string.Empty)
+                        @*<a href="/Category/Edit/@item.Id" class="btn btn-warning btn-sm" title="Güncelle"><i class="bi bi-pencil-fill"></i></a>*@
+                        @*<a href="/Category/Details/@item.Id" class="btn btn-info btn-sm" title="Detay"><i class="bi bi-search"></i></a>
+        <a href="/Category/Delete/@item.Id" class="btn btn-danger btn-sm" title="Sil"><i class="bi bi-archive-fill"></i></a>*@
 
                     </td>
                 </tr>
