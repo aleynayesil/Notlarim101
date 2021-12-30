@@ -1,4 +1,5 @@
 ﻿@using Notlarim101.Entity
+@using Notlarim101.WebApp.Models
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -19,9 +20,9 @@
 
     @{
         NotlarimUser user = null;
-        if (Session["login"] != null)
+        if (CurrentSession.User != null)
         {
-            user = Session["login"] as NotlarimUser;
+            user = CurrentSession.User as NotlarimUser;
         }
     }
 

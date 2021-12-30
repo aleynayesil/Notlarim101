@@ -16,24 +16,37 @@ namespace Notlarim101.WebApp.Controllers
     public class NoteController : Controller
     {
         private NoteManager nm = new NoteManager();
+        private CategoryManager cm = new CategoryManager();
+        private LikedManager lm = new LikedManager();
 
-       
         public ActionResult Index()
         {
-            var notes = nm.QList().Include("Category").Include("Owner").Where(
-                x => x.Owner.Id == CurrentSession.User.Id).OrderByDescending(
-                x => x.ModifiedOn);
-            return View(notes.ToList());
+            List<Note> notes = nm.QList().Include("Category").Include("Owner").Where(
+                   x => x.Owner.Id == CurrentSession.User.Id).OrderByDescending(
+                   x => x.ModifiedOn).ToList();
+
+            //List<Note> nots = nm.List(x => x.Owner.Id == CurrentSession.User.Id).OrderByDescending(x => x.ModifiedOn).ToList();
+
+            return View(notes);
         }
 
-       
+        public ActionResult MyLikedNotes()
+        {
+            var notes = lm.QList().Include("LikedUser").Include("Note").Where(
+                x => x.LikedUser.Id == CurrentSession.User.Id).Select(
+                x => x.Note).Include("Category").Include("Owner").OrderByDescending(
+                x => x.ModifiedOn);
+
+            return View("Index", notes.ToList());
+        }
+
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Note note = nm.Find(s=>s.Id==id);
+            Note note = nm.Find(s => s.Id == id);
             if (note == null)
             {
                 return HttpNotFound();
@@ -41,68 +54,74 @@ namespace Notlarim101.WebApp.Controllers
             return View(note);
         }
 
-       
         public ActionResult Create()
         {
-            ViewBag.CategoryId = new SelectList(nm.Categories, "Id", "Title");
+            ViewBag.CategoryId = new SelectList(cm.List(), "Id", "Title");
             return View();
         }
 
-       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Note note)
         {
+            ModelState.Remove("CreatedOn");
+            ModelState.Remove("ModifiedOn");
+            ModelState.Remove("ModifiedUsername");
             if (ModelState.IsValid)
             {
-                db.Notes.Add(note);
-                db.SaveChanges();
+                note.Owner = CurrentSession.User;
+                nm.Insert(note);
+
                 return RedirectToAction("Index");
             }
-
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Title", note.CategoryId);
+            ViewBag.CategoryId = new SelectList(cm.List(), "Id", "Title", note.CategoryId);
             return View(note);
         }
 
-        
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Note note = db.Notes.Find(id);
+            Note note = nm.Find(s => s.Id == id);
             if (note == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Title", note.CategoryId);
+            ViewBag.CategoryId = new SelectList(cm.List(), "Id", "Title", note.CategoryId);
             return View(note);
         }
 
-       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Text,IsDraft,LikeCount,CategoryId,CreatedOn,ModifiedOn,ModifiedUsername")] Note note)
+        public ActionResult Edit(Note note)
         {
+            ModelState.Remove("CreatedOn");
+            ModelState.Remove("ModifiedOn");
+            ModelState.Remove("ModifiedUsername");
             if (ModelState.IsValid)
             {
-                db.Entry(note).State = EntityState.Modified;
-                db.SaveChanges();
+                Note dbNote = nm.Find(s => s.Id == note.Id);
+                dbNote.IsDraft = note.IsDraft;
+                dbNote.CategoryId = note.Category.Id;
+                dbNote.Comments = note.Comments;
+                dbNote.Text = note.Text;
+                dbNote.Title = note.Title;
+
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Title", note.CategoryId);
+            ViewBag.CategoryId = new SelectList(cm.List(), "Id", "Title", note.CategoryId);
             return View(note);
         }
 
-        // GET: Note/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Note note = db.Notes.Find(id);
+            Note note = nm.Find(s => s.Id == id);
             if (note == null)
             {
                 return HttpNotFound();
@@ -110,24 +129,13 @@ namespace Notlarim101.WebApp.Controllers
             return View(note);
         }
 
-        // POST: Note/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Note note = db.Notes.Find(id);
-            db.Notes.Remove(note);
-            db.SaveChanges();
+            Note note = nm.Find(s => s.Id == id);
+            nm.Delete(note);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

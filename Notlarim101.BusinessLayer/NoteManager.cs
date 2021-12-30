@@ -7,14 +7,18 @@ using Notlarim101.BusinessLayer.Abstract;
 using Notlarim101.Core.DataAccess;
 using Notlarim101.DataAccessLayer.EntityFramework;
 using Notlarim101.Entity;
+using Notlarim101.Entity.Messages;
 
 namespace Notlarim101.BusinessLayer
 {
-    public class NoteManager:ManagerBase<Note>
+    public class NoteManager : ManagerBase<Note>
     {
-        //public List<Note> GetAllNotes()
-        //{
-        //    return rnote.List();
-        //}
+        BusinessLayerResult<Note> res = new BusinessLayerResult<Note>();
+
+        //    public List<Note> GetAllNotes()
+        //    {
+        //        return rnote.List();
+        //    }
+
     }
 }

@@ -14,7 +14,7 @@ namespace Notlarim101.WebApp.Data
         // automatically whenever you change your model schema, please use data migrations.
         // For more information refer to the documentation:
         // http://msdn.microsoft.com/en-us/data/jj591621.aspx
-    
+
         public Notlarim101WebAppContext() : base("name=Notlarim101WebAppContext")
         {
         }
@@ -24,5 +24,7 @@ namespace Notlarim101.WebApp.Data
         public System.Data.Entity.DbSet<Notlarim101.Entity.Note> Notes { get; set; }
 
         public System.Data.Entity.DbSet<Notlarim101.Entity.Category> Categories { get; set; }
+
+        public System.Data.Entity.DbSet<Notlarim101.Entity.Comment> Comments { get; set; }
     }
 }

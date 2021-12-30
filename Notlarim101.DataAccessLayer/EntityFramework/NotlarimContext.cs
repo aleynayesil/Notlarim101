@@ -8,7 +8,7 @@ using Notlarim101.Entity;
 
 namespace Notlarim101.DataAccessLayer.EntityFramework
 {
-    public class NotlarimContext:DbContext
+    public class NotlarimContext : DbContext
     {
         public DbSet<NotlarimUser> NotlarimUsers { get; set; }
         public DbSet<Note> Notes { get; set; }
@@ -29,8 +29,22 @@ namespace Notlarim101.DataAccessLayer.EntityFramework
             modelBuilder.Entity<Liked>()
                 .MapToStoredProcedures();
 
-        }
+            modelBuilder.Entity<Category>()
+                .HasMany(n => n.Notes)
+                .WithRequired(n => n.Category)
+                .WillCascadeOnDelete(true);
 
+            modelBuilder.Entity<Note>()
+                .HasMany(n => n.Comments)
+                .WithRequired(n=>n.Note)
+                .HasForeignKey(v=>v.NoteId);
+               // .WillCascadeOnDelete(true);
+
+            modelBuilder.Entity<Note>()
+                .HasMany(n => n.Likes)
+                .WithRequired(n => n.Note)
+                .WillCascadeOnDelete(true);
+        }
         public NotlarimContext()
         {
             Database.SetInitializer(new MyInitializer());
