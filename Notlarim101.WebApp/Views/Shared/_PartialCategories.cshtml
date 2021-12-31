@@ -1,9 +1,10 @@
 ﻿@using Notlarim101.BusinessLayer
 @using Notlarim101.Entity
+@using Notlarim101.WebApp.Models
 
 @{
     CategoryManager cm = new CategoryManager();
-    List<Category> list = cm.List();
+    List<Category> list = CacheHelper.GetCategoriesFromCache();
 }
 
 <div id="category1">

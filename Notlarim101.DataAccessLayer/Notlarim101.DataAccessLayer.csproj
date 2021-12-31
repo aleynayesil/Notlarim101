@@ -58,15 +58,6 @@
     <Compile Include="EntityFramework\NotlarimContext.cs" />
     <Compile Include="EntityFramework\Repository.cs" />
     <Compile Include="EntityFramework\RepositoryBase.cs" />
-    <Compile Include="Migrations\202112230742555_InitialCreate.cs" />
-    <Compile Include="Migrations\202112230742555_InitialCreate.Designer.cs">
-      <DependentUpon>202112230742555_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202112240925247_EntityEkleme.cs" />
-    <Compile Include="Migrations\202112240925247_EntityEkleme.Designer.cs">
-      <DependentUpon>202112240925247_EntityEkleme.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -86,14 +77,6 @@
       <Project>{a65ace9d-842f-41be-a9f6-8c90bcd838f4}</Project>
       <Name>Notlarim101.Entity</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202112230742555_InitialCreate.resx">
-      <DependentUpon>202112230742555_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202112240925247_EntityEkleme.resx">
-      <DependentUpon>202112240925247_EntityEkleme.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstract\" />

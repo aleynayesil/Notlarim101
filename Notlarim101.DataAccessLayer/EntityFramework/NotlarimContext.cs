@@ -15,7 +15,7 @@ namespace Notlarim101.DataAccessLayer.EntityFramework
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Liked> Likes { get; set; }
-
+        //not
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NotlarimUser>()
@@ -38,7 +38,7 @@ namespace Notlarim101.DataAccessLayer.EntityFramework
                 .HasMany(n => n.Comments)
                 .WithRequired(n=>n.Note)
                 .HasForeignKey(v=>v.NoteId);
-               // .WillCascadeOnDelete(true);
+               /// .WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Note>()
                 .HasMany(n => n.Likes)

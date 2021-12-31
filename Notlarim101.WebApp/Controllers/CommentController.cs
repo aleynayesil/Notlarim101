@@ -40,13 +40,13 @@ namespace Notlarim101.WebApp.Controllers
         }
 
         // GET: Comment/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+      
         public ActionResult Create(Comment comment, int? noteId)
         {
             ModelState.Remove("CreatedOn");
@@ -94,43 +94,68 @@ namespace Notlarim101.WebApp.Controllers
             return View(comment);
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(Comment comment)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(comment).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(comment);
-        //}
+        [HttpPost]
+        
+        public ActionResult Edit(int? id,string text)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Comment comment = cmm.Find(s => s.Id == id);
+            if (comment==null)
+            {
+                return new HttpNotFoundResult();
+            }
+            comment.Text = text;
+            if (cmm.Update(comment)>0)
+            {
+                return Json(new { result = true }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { result = false }, JsonRequestBehavior.AllowGet);
+        }
 
-        //// GET: Comment/Delete/5
-        //public ActionResult Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        //    }
-        //    Comment comment = db.Comments.Find(id);
-        //    if (comment == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(comment);
-        //}
+        // GET: Comment/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Comment comment = cmm.Find(s=>s.Id==id);
+            if (comment == null)
+            {
+                return HttpNotFound();
+            }
+            if (cmm.Delete(comment)>0)
+            {
+                return Json(new { result = true }, JsonRequestBehavior.AllowGet);
+            }
+            return Json(new { result = false }, JsonRequestBehavior.AllowGet);
+        }
 
-        //// POST: Comment/Delete/5
+        ////// POST: Comment/Delete/5
         //[HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
         //public ActionResult DeleteConfirmed(int id)
         //{
-        //    Comment comment = db.Comments.Find(id);
-           
+        //    Comment comment = cmm.Find(s=>s.Id==id);
+
         //    return RedirectToAction("Index");
         //}
-
+        public ActionResult ShowNoteComments(int? id)
+        {
+            if (id==null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            //Note note = nm.Find(s => s.Id == id);
+            Note note = nm.QList().Include("Comments").FirstOrDefault(s => s.Id == id);
+            if (note==null)
+            {
+                return HttpNotFound();
+            }
+            return PartialView("_PartialComment", note.Comments);
+        }
     }
 }
